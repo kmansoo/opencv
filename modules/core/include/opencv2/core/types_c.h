@@ -1356,7 +1356,15 @@ CV_INLINE  CvSlice  cvSlice( int start, int end )
 #if !(defined(CV__ENABLE_C_API_CTORS) && defined(__cplusplus))
     CvSlice slice = { start, end };
 #else
-    CvSlice slice(start, end);
+
+// 2018.10.1, by Mansoo(kmansoo@gmail.com)
+// I've added code below using if~else to fix compiling errors that occur when an application builds with CUDA's nvcc 10.x and OpenCV.
+#if !defined(__CUDACC__)
+    CvSlice slice(start, end); // Original code
+#else
+    CvSlice slice = { start, end };
+#endif
+
 #endif
     return slice;
 }
